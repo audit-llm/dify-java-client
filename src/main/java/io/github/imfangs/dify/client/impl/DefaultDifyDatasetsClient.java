@@ -224,6 +224,17 @@ public class DefaultDifyDatasetsClient extends AbstractDifyClient implements Dif
     }
 
     @Override
+    public SimpleResponse batchUpdateDocumentStatus(String datasetId, DocumentStatusAction action, List<String> documentIds) throws IOException, DifyApiException {
+        if (action == null) {
+            throw new IllegalArgumentException("文档状态动作不能为空");
+        }
+        UpdateDocumentStatusRequest request = UpdateDocumentStatusRequest.builder()
+                .documentIds(documentIds)
+                .build();
+        return updateDocumentStatus(datasetId, action.getApiValue(), request);
+    }
+
+    @Override
     public SegmentListResponse createSegments(String datasetId, String documentId, CreateSegmentsRequest request) throws IOException, DifyApiException {
         String path = buildDocumentPath(datasetId, documentId) + SEGMENTS_PATH;
         return executePost(path, request, SegmentListResponse.class);

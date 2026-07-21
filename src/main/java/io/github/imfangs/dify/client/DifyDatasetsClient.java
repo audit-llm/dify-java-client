@@ -225,6 +225,21 @@ public interface DifyDatasetsClient {
     SimpleResponse updateDocumentStatus(String datasetId, String action, UpdateDocumentStatusRequest request) throws IOException, DifyApiException;
 
     /**
+     * 批量更新文档状态（类型安全的便捷重载，封装 {@link #updateDocumentStatus}）。
+     *
+     * <p>对应 Dify 知识库 API {@code PATCH /datasets/{dataset_id}/documents/status/{action}}，
+     * 实测在 Dify 1.7.2 上可用。</p>
+     *
+     * @param datasetId   知识库ID
+     * @param action      状态动作枚举
+     * @param documentIds 文档ID列表
+     * @return 响应
+     * @throws IOException      IO异常
+     * @throws DifyApiException API异常
+     */
+    SimpleResponse batchUpdateDocumentStatus(String datasetId, DocumentStatusAction action, List<String> documentIds) throws IOException, DifyApiException;
+
+    /**
      * 新增文档分段
      *
      * @param datasetId  知识库ID

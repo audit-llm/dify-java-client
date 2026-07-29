@@ -36,6 +36,7 @@ public class DefaultDifyClient extends DifyBaseClientImpl implements DifyClient 
     private static final String DATA_PREFIX = "data:";
     private static final String PING_EVENT = "event: ping";
     private static final Set<EventType> CHAT_TERMINAL_EVENTS = EnumSet.of(EventType.MESSAGE_END, EventType.ERROR);
+    private static final Set<EventType> CHATFLOW_TERMINAL_EVENTS = EnumSet.of(EventType.MESSAGE_END, EventType.ERROR);
     private static final Set<EventType> WORKFLOW_TERMINAL_EVENTS = EnumSet.of(EventType.WORKFLOW_FINISHED, EventType.ERROR);
 
     // API 路径常量
@@ -114,7 +115,7 @@ public class DefaultDifyClient extends DifyBaseClientImpl implements DifyClient 
         // 执行流式请求
         executeStreamRequest(CHAT_MESSAGES_PATH, message, (line) -> processStreamLine(line, callback, CHAT_TERMINAL_EVENTS, (data, eventType) -> {
             StreamEventDispatcher.dispatchChatEvent(callback, data, eventType);
-        }), callback::onException);
+        }), callback::onException, callback::onStreamComplete);
     }
 
     @Override
@@ -124,9 +125,9 @@ public class DefaultDifyClient extends DifyBaseClientImpl implements DifyClient 
         message.setResponseMode(ResponseMode.STREAMING);
 
         // 执行流式请求
-        executeStreamRequest(CHAT_MESSAGES_PATH, message, (line) -> processStreamLine(line, callback, WORKFLOW_TERMINAL_EVENTS, (data, eventType) -> {
+        executeStreamRequest(CHAT_MESSAGES_PATH, message, (line) -> processStreamLine(line, callback, CHATFLOW_TERMINAL_EVENTS, (data, eventType) -> {
             StreamEventDispatcher.dispatchChatFlowEvent(callback, data, eventType);
-        }), callback::onException);
+        }), callback::onException, callback::onStreamComplete);
     }
 
     @Override
@@ -294,7 +295,7 @@ public class DefaultDifyClient extends DifyBaseClientImpl implements DifyClient 
         executeStreamRequest(COMPLETION_MESSAGES_PATH, request, (line) -> processStreamLine(line, callback, CHAT_TERMINAL_EVENTS, (data, eventType) -> {
             // 分发事件
             StreamEventDispatcher.dispatchCompletionEvent(callback, data);
-        }), callback::onException);
+        }), callback::onException, callback::onStreamComplete);
     }
 
     @Override
@@ -330,7 +331,7 @@ public class DefaultDifyClient extends DifyBaseClientImpl implements DifyClient 
         executeStreamRequest(WORKFLOWS_RUN_PATH, request, (line) -> processStreamLine(line, callback, WORKFLOW_TERMINAL_EVENTS, (data, eventType) -> {
             // 分发事件
             StreamEventDispatcher.dispatchWorkflowEvent(callback, data);
-        }), callback::onException);
+        }), callback::onException, callback::onStreamComplete);
     }
 
     @Override
@@ -393,8 +394,14 @@ public class DefaultDifyClient extends DifyBaseClientImpl implements DifyClient 
      * @param body          请求体
      * @param lineProcessor 行处理器，返回false表示停止处理
      * @param errorHandler  错误处理器
+     * @param completionHandler 服务端正常结束流响应后的回调
      */
-    private void executeStreamRequest(String path, Object body, LineProcessor lineProcessor, Consumer<Exception> errorHandler) {
+    private void executeStreamRequest(
+            String path,
+            Object body,
+            LineProcessor lineProcessor,
+            Consumer<Exception> errorHandler,
+            Runnable completionHandler) {
         // 创建请求
         RequestBody requestBody = createJsonRequestBody(body);
         Request httpRequest = new Request.Builder().url(baseUrl + path).post(requestBody).header("Authorization", "Bearer " + apiKey).header("Content-Type", "application/json").header("Accept", "text/event-stream").build();
@@ -444,6 +451,7 @@ public class DefaultDifyClient extends DifyBaseClientImpl implements DifyClient 
                             }
                         }
                     }
+                    completionHandler.run();
                 } catch (Exception e) {
                     log.error("处理流式响应失败: {}", e.getMessage(), e);
                     errorHandler.accept(e);

@@ -1,6 +1,5 @@
 package io.github.imfangs.dify.client.model.datasets;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +25,7 @@ public class DocumentListResponse {
     /**
      * 是否有更多
      */
-    @JsonProperty("hasMore")
-    @JsonAlias("has_more")
+    @JsonProperty("has_more")
     private Boolean hasMore;
 
     /**
@@ -66,30 +64,26 @@ public class DocumentListResponse {
         /**
          * 数据源类型
          */
-        @JsonProperty("dataSourceType")
-        @JsonAlias("data_source_type")
+        @JsonProperty("data_source_type")
         private String dataSourceType;
 
         /**
          * 数据源信息
          */
-        @JsonProperty("dataSourceInfo")
-        @JsonAlias("data_source_info")
+        @JsonProperty("data_source_info")
         private Object dataSourceInfo;
 
         /**
          * 数据源详细信息字典
          * 包含文件的详细信息，如上传文件的完整元数据
          */
-        @JsonProperty("dataSourceDetailDict")
-        @JsonAlias("data_source_detail_dict")
+        @JsonProperty("data_source_detail_dict")
         private Map<String, Object> dataSourceDetailDict;
 
         /**
          * 知识库处理规则ID
          */
-        @JsonProperty("datasetProcessRuleId")
-        @JsonAlias("dataset_process_rule_id")
+        @JsonProperty("dataset_process_rule_id")
         private String datasetProcessRuleId;
 
         /**
@@ -100,22 +94,19 @@ public class DocumentListResponse {
         /**
          * 创建来源
          */
-        @JsonProperty("createdFrom")
-        @JsonAlias("created_from")
+        @JsonProperty("created_from")
         private String createdFrom;
 
         /**
          * 创建者
          */
-        @JsonProperty("createdBy")
-        @JsonAlias("created_by")
+        @JsonProperty("created_by")
         private String createdBy;
 
         /**
          * 创建时间
          */
-        @JsonProperty("createdAt")
-        @JsonAlias("created_at")
+        @JsonProperty("created_at")
         private Long createdAt;
 
         /**
@@ -126,8 +117,7 @@ public class DocumentListResponse {
         /**
          * 索引状态
          */
-        @JsonProperty("indexingStatus")
-        @JsonAlias("indexing_status")
+        @JsonProperty("indexing_status")
         private String indexingStatus;
 
         /**
@@ -143,15 +133,13 @@ public class DocumentListResponse {
         /**
          * 禁用时间
          */
-        @JsonProperty("disabledAt")
-        @JsonAlias("disabled_at")
+        @JsonProperty("disabled_at")
         private Long disabledAt;
 
         /**
          * 禁用者
          */
-        @JsonProperty("disabledBy")
-        @JsonAlias("disabled_by")
+        @JsonProperty("disabled_by")
         private String disabledBy;
 
         /**
@@ -162,37 +150,32 @@ public class DocumentListResponse {
         /**
          * 字数统计
          */
-        @JsonProperty("wordCount")
-        @JsonAlias("word_count")
+        @JsonProperty("word_count")
         private Integer wordCount;
 
         /**
          * 命中次数
          */
-        @JsonProperty("hitCount")
-        @JsonAlias("hit_count")
+        @JsonProperty("hit_count")
         private Integer hitCount;
 
         /**
          * 显示状态
          * 可能的值：queuing, indexing, error, available, disabled, archived
          */
-        @JsonProperty("displayStatus")
-        @JsonAlias("display_status")
+        @JsonProperty("display_status")
         private String displayStatus;
 
         /**
          * 文档形式
          */
-        @JsonProperty("docForm")
-        @JsonAlias("doc_form")
+        @JsonProperty("doc_form")
         private String docForm;
 
         /**
          * 文档元数据
          */
-        @JsonProperty("docMetadata")
-        @JsonAlias("doc_metadata")
+        @JsonProperty("doc_metadata")
         private List<Map<String, Object>> docMetadata;
     }
 }
